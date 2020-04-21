@@ -26,7 +26,11 @@ namespace Wombo.Api.Controllers
                 Version = "0.1.0",
                 Environment = $"{_environment.EnvironmentName}",
                 Status = "Running",
-                EnvironmentValue = _configuration["CustomValue"]
+                AppSettings = new 
+                {
+                    AppName = _configuration["AppSettings:AppName"],
+                    AppDescription = _configuration["AppSettings:AppDescription"]
+                } 
             });
         }
     }

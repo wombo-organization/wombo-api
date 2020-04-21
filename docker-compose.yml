@@ -1,0 +1,14 @@
+version: '3.2'
+
+services:
+  wombo.worker:
+    image: wombo/wombo.api
+    container_name: wombo-api-container
+    build:
+      context: .
+      dockerfile: ./src/Wombo.Api/Dockerfile
+    environment:
+      - AppSettings:AppName=Docker Compose App Name
+      - AppSettings:AppDescription=Docker Compose App Description
+    ports:
+      - "5000:80"
