@@ -31,12 +31,9 @@ jobs:
     - name: Build Docker Image
       run: docker build -f ./src/Wombo.Api/Dockerfile -t local/wombo.api .
 
-    - name: Stop and Remove Current Container
+    - name: Execute/Update Container
       run: |
-        docker stop womboapi-container
-        docker rm womboapi-container
-
-    - name: Run New Container With Lastest Image
-      if: always()
-      run: docker run -d -p 5000:80 --name womboapi-container local/wombo.api
+        docker stop womboapi-container || true
+        docker rm womboapi-container || true
+        docker run -d -p 5000:80 --name womboapi-container local/wombo.api
       
