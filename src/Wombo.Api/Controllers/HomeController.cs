@@ -5,8 +5,8 @@ using Microsoft.Extensions.Configuration;
 namespace Wombo.Api.Controllers
 {
     [ApiController]
-    [Route("status")]
-    public class StatusController : ControllerBase
+    [Route("")]
+    public class HomeController : ControllerBase
     {
         private readonly IWebHostEnvironment _environment;
         private readonly IConfiguration _configuration;
@@ -23,7 +23,7 @@ namespace Wombo.Api.Controllers
             return Ok(new
             {
                 Project = "Wombo API",
-                Version = "0.6.0",
+                Version = "0.1.0",
                 Environment = $"{_environment.EnvironmentName}",
                 Status = "Running",
                 AppSettings = new 
