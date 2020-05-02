@@ -11,7 +11,7 @@ namespace Wombo.Api.Controllers
         private readonly IWebHostEnvironment _environment;
         private readonly IConfiguration _configuration;
 
-        public StatusController(IWebHostEnvironment environment, IConfiguration configuration)
+        public HomeController(IWebHostEnvironment environment, IConfiguration configuration)
         {
             _environment = environment;
             _configuration = configuration;
