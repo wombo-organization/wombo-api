@@ -2,38 +2,36 @@ name: .NET Core
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.201
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.201
 
-    - name: Install dependencies
-      run: dotnet restore
+      - name: Install dependencies
+        run: dotnet restore
 
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
 
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal
+      - name: Test
+        run: dotnet test --no-restore --verbosity normal
 
-    - name: Login to Docker Registry
-      run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+      - name: Login to Docker Registry
+        run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-    - name: Build Docker Image
-      run: docker build -f ./src/Wombo.Api/Dockerfile -t tfsantosbr/wombo.api .
+      - name: Build Docker Image
+        run: docker build -f ./src/Wombo.Api/Dockerfile -t tfsantosbr/wombo.api:${{ GITHUB_SHA }} .
 
-    - name: Push the latest Docker image
-      run: docker push tfsantosbr/wombo.api
-      
+      - name: Push the latest Docker image
+        run: docker push tfsantosbr/wombo.api:${{ GITHUB_SHA }}
