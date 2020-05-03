@@ -31,7 +31,7 @@ jobs:
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
       - name: Build Docker Image
-        run: docker build -f ./src/Wombo.Api/Dockerfile -t tfsantosbr/wombo.api:$GITHUB_SHA_SHORT .
+        run: docker build -f ./src/Wombo.Api/Dockerfile -t tfsantosbr/wombo.api:$GITHUB_SHA .
 
       - name: Push the latest Docker image
-        run: docker push tfsantosbr/wombo.api:$GITHUB_SHA_SHORT
+        run: docker push tfsantosbr/wombo.api:$GITHUB_SHA
