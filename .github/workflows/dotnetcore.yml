@@ -59,11 +59,11 @@ jobs:
         with:
           task-definition: .aws/task-definition.yml
           container-name: staging-api-container
-          image: tfsantosbr/wombo.api:903dc7cc050bae60e58138b2687bdf215049e0bc
+          image: tfsantosbr/wombo.api
 
       - name: Deploy to Amazon ECS service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.render-task.outputs.task-definition }}
           service: my-service
-          cluster: wombo-sandbox-cluster
+          cluster: wombo-sandbox-clusterolk
