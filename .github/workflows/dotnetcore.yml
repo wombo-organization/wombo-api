@@ -45,7 +45,7 @@ jobs:
 
       - name: Update ECS Task
         run: |
-          ::set-env name=TASK_ARN::$(aws ecs list-tasks --cluster wombo-sandbox-cluster --family staging-api-task --query 'taskArns[0]' --output text)
+          echo "::set-env name=TASK_ARN::$(aws ecs list-tasks --cluster wombo-sandbox-cluster --family staging-api-task --query 'taskArns[0]' --output text)"
           aws ecs stop-task --task $TASK_ARN --cluster wombo-sandbox-cluster
-          ::set-env name=TASK_REVISION::$(aws ecs register-task-definition --family staging-api-task --cli-input-yaml file://task-definition.yml --query 'taskDefinition.revision' --output text)
+          echo "::set-env name=TASK_REVISION::$(aws ecs register-task-definition --family staging-api-task --cli-input-yaml file://task-definition.yml --query 'taskDefinition.revision' --output text)"
           aws ecs run-task --task-definition staging-api-task:$TASK_REVISION --cluster wombo-sandbox-cluster
