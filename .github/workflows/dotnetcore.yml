@@ -35,3 +35,17 @@ jobs:
 
       - name: Push the latest Docker image
         run: docker push tfsantosbr/wombo.api:$GITHUB_SHA
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Update ECS Task
+        run: |
+          taskArn=$(aws ecs list-tasks --cluster wombo-sandbox-cluster --family staging-api-task --query 'taskArns[0]' --output text)
+          aws ecs stop-task --task $taskArn --cluster wombo-sandbox-cluster
+          taskRevision=$(aws ecs register-task-definition --family staging-api-task --cli-input-yaml file://task-definition.yml --query 'taskDefinition.revision' --output text)
+          aws ecs run-task --task-definition staging-api-task:$taskRevision --cluster wombo-sandbox-cluster
