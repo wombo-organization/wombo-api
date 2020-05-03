@@ -43,27 +43,14 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      # - name: Stop Current Task
-      #   env:
-      #     TASK_ARN: $(aws ecs list-tasks --cluster wombo-sandbox-cluster --family staging-api-task --query 'taskArns[0]' --output text)
-      #   run: aws ecs stop-task --task $TASK_ARN --cluster wombo-sandbox-cluster
+      - name: Stop Current Task
+        env:
+          TASK_ARN: $(aws ecs list-tasks --cluster wombo-sandbox-cluster --family staging-api-task --query 'taskArns[0]' --output text)
+        run: aws ecs stop-task --task $TASK_ARN --cluster wombo-sandbox-cluster
 
-      # - name: Register and Run new Task
-      #   env:
-      #     TASK_REVISION: $(aws ecs register-task-definition --family staging-api-task --cli-input-yaml file://task-definition.yml --query 'taskDefinition.revision' --output text)
-      #   run: aws ecs run-task --task-definition staging-api-task:$TASK_REVISION --cluster wombo-sandbox-cluster
+      - name: Register and Run new Task
+        env:
+          TASK_REVISION: $(aws ecs register-task-definition --family staging-api-task --cli-input-yaml file://task-definition.yml --query 'taskDefinition.revision' --output text)
+        run: aws ecs run-task --task-definition staging-api-task:$TASK_REVISION --cluster wombo-sandbox-cluster
 
-      - name: Render Amazon ECS task definition
-        id: render-task
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: .aws/task-definition.yml
-          container-name: staging-api-container
-          image: tfsantosbr/wombo.api
-
-      - name: Deploy to Amazon ECS service
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.render-task.outputs.task-definition }}
-          service: my-service
-          cluster: wombo-sandbox-clusterolk
+  
