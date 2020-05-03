@@ -43,9 +43,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Update ECS Task
-        run: |
-          echo "::set-env name=TASK_ARN::$(aws ecs list-tasks --cluster wombo-sandbox-cluster --family staging-api-task --query 'taskArns[0]' --output text)"
-          aws ecs stop-task --task $TASK_ARN --cluster wombo-sandbox-cluster
-          echo "::set-env name=TASK_REVISION::$(aws ecs register-task-definition --family staging-api-task --cli-input-yaml file://task-definition.yml --query 'taskDefinition.revision' --output text)"
-          aws ecs run-task --task-definition staging-api-task:$TASK_REVISION --cluster wombo-sandbox-cluster
+      - name: Stop Current Task
+        env:
+          TASK_ARN: $(aws ecs list-tasks --cluster wombo-sandbox-cluster --family staging-api-task --query 'taskArns[0]' --output text)
+        run: aws ecs stop-task --task $TASK_ARN --cluster wombo-sandbox-cluster
+
+      - name: Register and Run new Task
+        env:
+          TASK_REVISION: $(aws ecs register-task-definition --family staging-api-task --cli-input-yaml file://task-definition.yml --query 'taskDefinition.revision' --output text)
+        run: aws ecs run-task --task-definition staging-api-task:$TASK_REVISION --cluster wombo-sandbox-cluster
