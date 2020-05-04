@@ -4,7 +4,7 @@
       "cpu": 0,
       "environment": [],
       "essential": true,
-      "image": "tfsantosbr/wombo.api:903dc7cc050bae60e58138b2687bdf215049e0bc",
+      "image": "CONTAINER_IMAGE",
       "mountPoints": [],
       "name": "staging-api-container",
       "portMappings": [
