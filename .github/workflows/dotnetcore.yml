@@ -25,7 +25,7 @@ jobs:
         env:
           TASK_ARN: $(aws ecs list-tasks --cluster wombo-sandbox-cluster --family staging-api-task --query 'taskArns[0]' --output text)
 
-
+ 
       # - name: Install dependencies
       #   run: dotnet restore
 
