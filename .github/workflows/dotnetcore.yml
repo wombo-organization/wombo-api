@@ -20,15 +20,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: ECS - Stop current task
-        run: aws ecs stop-task --task ${{ env.TASK_ARN }} --cluster wombo-sandbox-cluster || true
-        env:
-          TASK_ARN: $(aws ecs list-tasks --cluster wombo-sandbox-cluster --family staging-api-task --query 'taskArns[0]' --output text)
+      - name: ECS - Get Current Task
+        run: echo "::set-env name=TASK_ARN::$(aws ecs list-tasks --cluster wombo-sandbox-cluster --family staging-api-task --query 'taskArns[0]' --output text)"
 
-      - name: ECS - Register and run new task
-        run: aws ecs run-task --task-definition staging-api-task:${{ env.TASK_REVISION }} --cluster wombo-sandbox-cluster
-        env:
-          TASK_REVISION: $(aws ecs register-task-definition --family staging-api-task --cli-input-yaml file://task-definition.yml --query 'taskDefinition.revision' --output text)
+      - name: ECS - Stop current Task
+        run: echo "Current Task is => ${{ env.TASK_ARN }}"
  
       # - name: Install dependencies
       #   run: dotnet restore
