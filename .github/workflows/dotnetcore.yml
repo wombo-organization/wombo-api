@@ -7,8 +7,9 @@ on:
     branches: [master]
 
 env:
-  CONTAINER_IMAGE: tfsantosbr/wombo.api:${{ env.GITHUB_SHA }}
+  CONTAINER_IMAGE: tfsantosbr/wombo.api
   CLUSTER_NAME: wombo-sandbox-cluster
+  CONTAINER_TAG: $GITHUB_SHA
 
 jobs:
   build:
@@ -30,10 +31,10 @@ jobs:
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
       - name: Build Docker Image
-        run: docker build -f ./src/Wombo.Api/Dockerfile -t $CONTAINER_IMAGE .
+        run: docker build -f ./src/Wombo.Api/Dockerfile -t $CONTAINER_IMAGE:$CONTAINER_TAG .
 
       - name: Push the latest Docker image
-        run: docker push $CONTAINER_IMAGE
+        run: docker push $CONTAINER_IMAGE:$CONTAINER_TAG
         
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -43,21 +44,21 @@ jobs:
           aws-region: us-east-1
 
       - name: Set container image name in Task Definition file
-        run: sed -i 's|CONTAINER_IMAGE|'$CONTAINER_IMAGE'|g' task-definition.json
+        run: sed -i 's|CONTAINER_IMAGE|'$CONTAINER_IMAGE:$CONTAINER_TAG'|g' task-definition.json
 
       - name: ECS - Get Current Task
-        run: echo "::set-env name=TASK_ARN::$(aws ecs list-tasks --cluster ${{ env.CLUSTER_NAME }} \
+        run: echo "::set-env name=TASK_ARN::$(aws ecs list-tasks --cluster $CLUSTER_NAME \
           --family staging-api-task --query 'taskArns[0]' --output text)"
 
       - name: ECS - Stop Current Task
-        run: aws ecs stop-task --task ${{ env.TASK_ARN }} --cluster ${{ env.CLUSTER_NAME }} || true
+        run: aws ecs stop-task --task $TASK_ARN --cluster $CLUSTER_NAME || true
 
       - name: ECS - Register New task
         run: echo "::set-env name=TASK_REVISION::$(aws ecs register-task-definition --family staging-api-task \
           --cli-input-json file://task-definition.json --query 'taskDefinition.revision' --output text)"
  
       - name: ECS - Run New Task
-        run: aws ecs run-task --task-definition staging-api-task:${{ env.TASK_REVISION }} \
-          --cluster ${{ env.CLUSTER_NAME }}
+        run: aws ecs run-task --task-definition staging-api-task:$TASK_REVISION \
+          --cluster $CLUSTER_NAME
         
 
