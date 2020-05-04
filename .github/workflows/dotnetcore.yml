@@ -13,29 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 3.1.201
-
-      - name: Install dependencies
-        run: dotnet restore
-
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
-
-      - name: Test
-        run: dotnet test --no-restore --verbosity normal
-
-      - name: Login to Docker Registry
-        run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-
-      - name: Build Docker Image
-        run: docker build -f ./src/Wombo.Api/Dockerfile -t tfsantosbr/wombo.api:$GITHUB_SHA .
-
-      - name: Push the latest Docker image
-        run: docker push tfsantosbr/wombo.api:$GITHUB_SHA
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -43,13 +20,49 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Stop Current Task
+      - name: Get current Task ID
+        run: echo "Current Task => $TASK_ARN"
         env:
-          TASK_ARN: $(aws ecs list-tasks --cluster wombo-sandbox-cluster --family staging-api-task --query 'taskArns[0]' --output text)
-        run: aws ecs stop-task --task $TASK_ARN --cluster wombo-sandbox-cluster
+          TASK_ARN: ${{ aws ecs list-tasks --cluster wombo-sandbox-cluster --family staging-api-task --query 'taskArns[0]' --output text }}
 
-      - name: Register and Run new Task
-        env:
-          TASK_REVISION: $(aws ecs register-task-definition --family staging-api-task --cli-input-yaml file://task-definition.yml --query 'taskDefinition.revision' --output text)
-        run: aws ecs run-task --task-definition staging-api-task:$TASK_REVISION --cluster wombo-sandbox-cluster
+
+      # - name: Setup .NET Core
+      #   uses: actions/setup-dotnet@v1
+      #   with:
+      #     dotnet-version: 3.1.201
+
+      # - name: Install dependencies
+      #   run: dotnet restore
+
+      # - name: Build
+      #   run: dotnet build --configuration Release --no-restore
+
+      # - name: Test
+      #   run: dotnet test --no-restore --verbosity normal
+
+      # - name: Login to Docker Registry
+      #   run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+      # - name: Build Docker Image
+      #   run: docker build -f ./src/Wombo.Api/Dockerfile -t tfsantosbr/wombo.api:$GITHUB_SHA .
+
+      # - name: Push the latest Docker image
+      #   run: docker push tfsantosbr/wombo.api:$GITHUB_SHA
+
+      # - name: Configure AWS Credentials
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: us-east-1
+
+      # - name: Stop Current Task
+      #   env:
+      #     TASK_ARN: $(aws ecs list-tasks --cluster wombo-sandbox-cluster --family staging-api-task --query 'taskArns[0]' --output text)
+      #   run: aws ecs stop-task --task $TASK_ARN --cluster wombo-sandbox-cluster
+
+      # - name: Register and Run new Task
+      #   env:
+      #     TASK_REVISION: $(aws ecs register-task-definition --family staging-api-task --cli-input-yaml file://task-definition.yml --query 'taskDefinition.revision' --output text)
+      #   run: aws ecs run-task --task-definition staging-api-task:$TASK_REVISION --cluster wombo-sandbox-cluster
 
