@@ -27,7 +27,7 @@ jobs:
         run: echo "Current Task is => ${{ env.TASK_ARN }}"
 
       - name: ECS - Register New task
-        run: aws ecs register-task-definition --family staging-api-task --cli-input-json file://task-definition.json
+        run: echo "::set-env name=TASK_REVISION::$(aws ecs register-task-definition --family staging-api-task --cli-input-json file://task-definition.json --query 'taskDefinition.revision' --output text)"
  
       - name: ECS - Run New Task
         run: echo "New Task Revision is => ${{ env.TASK_REVISION }}"
