@@ -24,13 +24,14 @@ jobs:
         run: echo "::set-env name=TASK_ARN::$(aws ecs list-tasks --cluster wombo-sandbox-cluster --family staging-api-task --query 'taskArns[0]' --output text)"
 
       - name: ECS - Stop Current Task
-        run: echo "Current Task is => ${{ env.TASK_ARN }}"
+        run: aws ecs stop-task --task ${{ env.TASK_ARN }} --cluster wombo-sandbox-cluster
 
       - name: ECS - Register New task
         run: echo "::set-env name=TASK_REVISION::$(aws ecs register-task-definition --family staging-api-task --cli-input-json file://task-definition.json --query 'taskDefinition.revision' --output text)"
  
       - name: ECS - Run New Task
-        run: echo "New Task Revision is => ${{ env.TASK_REVISION }}"
+        run: aws ecs run-task --task-definition staging-api-task:${{ env.TASK_REVISION }} --cluster wombo-sandbox-cluster
+        
 
       # - name: Install dependencies
       #   run: dotnet restore
