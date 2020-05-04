@@ -21,7 +21,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Set container image name in Task Definition file
-        run: sed -i 's/CONTAINER_IMAGE/tfsantosbr/wombo.api:v1/g' task-definition.json
+        run: sed -i 's/CONTAINER_IMAGE/tfsantosbr\/wombo.api:v1/g' task-definition.json
 
       - name: ECS - Get Current Task
         run: echo "::set-env name=TASK_ARN::$(aws ecs list-tasks --cluster wombo-sandbox-cluster --family staging-api-task --query 'taskArns[0]' --output text)"
