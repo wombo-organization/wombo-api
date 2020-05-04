@@ -21,7 +21,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Get current Task ID
-        run: aws ecs stop-task --task ${{ env.TASK_ARN }} --cluster wombo-sandbox-cluster
+        run: aws ecs stop-task --task ${{ env.TASK_ARN }} --cluster wombo-sandbox-cluster || true
         env:
           TASK_ARN: $(aws ecs list-tasks --cluster wombo-sandbox-cluster --family staging-api-task --query 'taskArns[0]' --output text)
 
