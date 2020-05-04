@@ -7,7 +7,7 @@ on:
     branches: [master]
 
 env:
-  CONTAINER_IMAGE: tfsantosbr/wombo.api:$GITHUB_SHA
+  CONTAINER_IMAGE: tfsantosbr/wombo.api:${{ env.GITHUB_SHA }}
   CLUSTER_NAME: wombo-sandbox-cluster
 
 jobs:
