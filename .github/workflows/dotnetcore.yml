@@ -13,11 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 3.1.201
-          
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -28,7 +23,7 @@ jobs:
       - name: Get current Task ID
         run: echo "Current Task => $TASK_ARN"
         env:
-          TASK_ARN: ${{ aws ecs list-tasks --cluster wombo-sandbox-cluster --family staging-api-task --query 'taskArns[0]' --output text }}
+          TASK_ARN: $(aws ecs list-tasks --cluster wombo-sandbox-cluster --family staging-api-task --query 'taskArns[0]' --output text)
 
 
       # - name: Install dependencies
