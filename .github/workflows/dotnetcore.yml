@@ -7,7 +7,7 @@ on:
     branches: [master]
 
 env:
-  CONTAINER_IMAGE: tfsantosbr/wombo.api
+  CONTAINER_IMAGE: tfsantosbr/wombo.api:$GITHUB_SHA
   CLUSTER_NAME: wombo-sandbox-cluster
 
 jobs:
@@ -30,10 +30,10 @@ jobs:
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
       - name: Build Docker Image
-        run: docker build -f ./src/Wombo.Api/Dockerfile -t ${{ env.CONTAINER_IMAGE }}:$GITHUB_SHA .
+        run: docker build -f ./src/Wombo.Api/Dockerfile -t $CONTAINER_IMAGE .
 
       - name: Push the latest Docker image
-        run: docker push ${{ env.CONTAINER_IMAGE }}:$GITHUB_SHA
+        run: docker push $CONTAINER_IMAGE
         
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -43,18 +43,21 @@ jobs:
           aws-region: us-east-1
 
       - name: Set container image name in Task Definition file
-        run: sed -i 's|CONTAINER_IMAGE|'${{ env.CONTAINER_IMAGE }}':'$GITHUB_SHA'|g' task-definition.json
+        run: sed -i 's|CONTAINER_IMAGE|'$CONTAINER_IMAGE'|g' task-definition.json
 
       - name: ECS - Get Current Task
-        run: echo "::set-env name=TASK_ARN::$(aws ecs list-tasks --cluster ${{ env.CLUSTER_NAME }} --family staging-api-task --query 'taskArns[0]' --output text)"
+        run: echo "::set-env name=TASK_ARN::$(aws ecs list-tasks --cluster ${{ env.CLUSTER_NAME }} \
+          --family staging-api-task --query 'taskArns[0]' --output text)"
 
       - name: ECS - Stop Current Task
         run: aws ecs stop-task --task ${{ env.TASK_ARN }} --cluster ${{ env.CLUSTER_NAME }} || true
 
       - name: ECS - Register New task
-        run: echo "::set-env name=TASK_REVISION::$(aws ecs register-task-definition --family staging-api-task --cli-input-json file://task-definition.json --query 'taskDefinition.revision' --output text)"
+        run: echo "::set-env name=TASK_REVISION::$(aws ecs register-task-definition --family staging-api-task \
+          --cli-input-json file://task-definition.json --query 'taskDefinition.revision' --output text)"
  
       - name: ECS - Run New Task
-        run: aws ecs run-task --task-definition staging-api-task:${{ env.TASK_REVISION }} --cluster ${{ env.CLUSTER_NAME }}
+        run: aws ecs run-task --task-definition staging-api-task:${{ env.TASK_REVISION }} \
+          --cluster ${{ env.CLUSTER_NAME }}
         
 
