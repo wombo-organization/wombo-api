@@ -49,7 +49,7 @@ jobs:
         run: echo "::set-env name=TASK_ARN::$(aws ecs list-tasks --cluster ${{ env.CLUSTER_NAME }} --family staging-api-task --query 'taskArns[0]' --output text)"
 
       - name: ECS - Stop Current Task
-        run: aws ecs stop-task --task ${{ env.TASK_ARN }} --cluster ${{ env.CLUSTER_NAME }}
+        run: aws ecs stop-task --task ${{ env.TASK_ARN }} --cluster ${{ env.CLUSTER_NAME }} || true
 
       - name: ECS - Register New task
         run: echo "::set-env name=TASK_REVISION::$(aws ecs register-task-definition --family staging-api-task --cli-input-json file://task-definition.json --query 'taskDefinition.revision' --output text)"
