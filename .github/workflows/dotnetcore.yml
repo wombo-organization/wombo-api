@@ -10,6 +10,7 @@ env:
   CONTAINER_IMAGE: tfsantosbr/wombo.api
   CLUSTER_NAME: wombo-sandbox-cluster
   TASK_NAME: staging-api-task
+  #TASK_DEFINITION_FILE: 
 
 jobs:
   build:
