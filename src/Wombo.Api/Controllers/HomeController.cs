@@ -23,7 +23,7 @@ namespace Wombo.Api.Controllers
             return Ok(new
             {
                 Project = "Wombo API",
-                Version = "1.0",
+                Version = "2.0",
                 Environment = $"{_environment.EnvironmentName}",
                 Status = "Running",
                 AppSettings = new 
