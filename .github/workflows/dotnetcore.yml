@@ -46,10 +46,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Set Task Definition Values
-        run: |
-          sed -i 's|CONTAINER_IMAGE|'${{ env.CONTAINER_IMAGE }}':'$GITHUB_SHA'|g' ${{ env.TASK_DEFINITION_PATH }}
-          sed -i 's|CONTAINER_NAME|'${{ env.CONTAINER_NAME }}'|g' ${{ env.TASK_DEFINITION_PATH }}
-          sed -i 's|TASK_NAME|'${{ env.TASK_NAME }}'|g' ${{ env.TASK_DEFINITION_PATH }}
+        run: sed -i 's|CONTAINER_IMAGE|'${{ env.CONTAINER_IMAGE }}':'$GITHUB_SHA'|g' ${{ env.TASK_DEFINITION_PATH }}
 
       - name: ECS - Get Current Task
         run: echo "::set-env name=TASK_ARN::$(aws ecs list-tasks --cluster ${{ env.CLUSTER_NAME }} --family ${{ env.TASK_NAME }} --query 'taskArns[0]' --output text)"
