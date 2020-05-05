@@ -45,7 +45,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Set container image name in Task Definition file
-        run: sed -i 's|CONTAINER_IMAGE|'${{ env.CONTAINER_IMAGE }}':'$GITHUB_SHA'|g' task-definition.json
+        run: sed -i 's|CONTAINER_IMAGE|'${{ env.CONTAINER_IMAGE }}':'$GITHUB_SHA'|g' .aws/task-definition.json
 
       - name: ECS - Get Current Task
         run: echo "::set-env name=TASK_ARN::$(aws ecs list-tasks --cluster ${{ env.CLUSTER_NAME }} --family ${{ env.TASK_NAME }} --query 'taskArns[0]' --output text)"
@@ -54,7 +54,7 @@ jobs:
         run: aws ecs stop-task --task ${{ env.TASK_ARN }} --cluster ${{ env.CLUSTER_NAME }} || true
 
       - name: ECS - Register New task
-        run: echo "::set-env name=TASK_REVISION::$(aws ecs register-task-definition --family ${{ env.TASK_NAME }} --cli-input-json file://task-definition.json --query 'taskDefinition.revision' --output text)"
+        run: echo "::set-env name=TASK_REVISION::$(aws ecs register-task-definition --family ${{ env.TASK_NAME }} --cli-input-json file://.aws/task-definition.json --query 'taskDefinition.revision' --output text)"
  
       - name: ECS - Run New Task
         run: aws ecs run-task --task-definition ${{ env.TASK_NAME }}:${{ env.TASK_REVISION }} --cluster ${{ env.CLUSTER_NAME }}
