@@ -8,7 +8,6 @@ on:
 
 env:
   CONTAINER_IMAGE: tfsantosbr/wombo.api
-  CONTAINER_NAME: staging-api-container
   CLUSTER_NAME: wombo-sandbox-cluster
   TASK_NAME: staging-api-task
   TASK_DEFINITION_PATH: .aws/task-definition.json
