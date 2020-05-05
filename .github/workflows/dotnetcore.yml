@@ -30,10 +30,10 @@ jobs:
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
       - name: Build Docker Image
-        run: docker build -f ./src/Wombo.Api/Dockerfile -t $CONTAINER_IMAGE:$GITHUB_SHA .
+        run: docker build -f ./src/Wombo.Api/Dockerfile -t ${{ env.CONTAINER_IMAGE }}:${{ env.GITHUB_SHA }} .
 
       - name: Push the latest Docker image
-        run: docker push $CONTAINER_IMAGE:$GITHUB_SHA
+        run: docker push ${{ env.CONTAINER_IMAGE }}:${{ env.GITHUB_SHA }}
         
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -43,7 +43,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Set container image name in Task Definition file
-        run: sed -i 's|CONTAINER_IMAGE|'$CONTAINER_IMAGE':'$GITHUB_SHA'|g' task-definition.json
+        run: sed -i 's|CONTAINER_IMAGE|'${{ env.CONTAINER_IMAGE }}':'${{ env.GITHUB_SHA }}'|g' task-definition.json
 
       - name: ECS - Get Current Task
         run: echo "::set-env name=TASK_ARN::$(aws ecs list-tasks --cluster ${{ env.CLUSTER_NAME }} \
