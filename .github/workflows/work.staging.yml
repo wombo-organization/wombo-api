@@ -2,9 +2,9 @@ name: .NET Core
 
 on:
   push:
-    branches: [release/*]
+    branches: [ release/* ]
   pull_request:
-    branches: [release/*]
+    branches: [ release/* ]
 
 env:
   CONTAINER_IMAGE: tfsantosbr/wombo.api
