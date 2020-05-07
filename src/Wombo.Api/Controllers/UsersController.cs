@@ -19,6 +19,9 @@ namespace Wombo.Api.Controllers
                 new User(2, "Bruna", "bruna@email.com" ),
                 new User(3, "Iran", "iran@email.com"),
                 new User(4, "Rogério", "rogerio@email.com"),
+                new User(5, "Ricardo", "ricardo@email.com"),
+                new User(6, "Ronaldo", "ronaldo@email.com"),
+                new User(7, "Helene", "helene@email.com"),
             };
         }
 
