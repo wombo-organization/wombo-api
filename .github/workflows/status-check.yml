@@ -6,9 +6,6 @@ on:
       - master
       - develop
       - release/*
-    types:
-      - opened
-      - reopened
 
 jobs:
   build:
