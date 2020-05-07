@@ -1,16 +1,14 @@
-name: .NET Core
+name: Wombo API (Production)
 
 on:
   push:
-    branches: [ release/* ]
-  pull_request:
-    branches: [ release/* ]
+    branches: [master]
 
 env:
   CONTAINER_IMAGE: tfsantosbr/wombo.api
   CLUSTER_NAME: wombo-sandbox-cluster
-  TASK_NAME: staging-api-task
-  TASK_DEFINITION_PATH: .aws/task-definition.staging.json
+  TASK_NAME: production-api-task
+  TASK_DEFINITION_PATH: .aws/task-definition.production.json
 
 jobs:
   build:
