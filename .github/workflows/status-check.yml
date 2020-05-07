@@ -1,12 +1,6 @@
-name: Wombo API (Status Check)
+name: Wombo API Status Check
 
-on: [pull_request]
-
-env:
-  CONTAINER_IMAGE: tfsantosbr/wombo.api
-  CLUSTER_NAME: wombo-sandbox-cluster
-  TASK_NAME: production-api-task
-  TASK_DEFINITION_PATH: .aws/task-definition.production.json
+on: [ pull_request ]
 
 jobs:
   build:
