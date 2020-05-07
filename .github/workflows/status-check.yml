@@ -1,11 +1,6 @@
 name: Wombo API Status Check
 
-on:
-  pull_request:
-    branches:
-      - master
-      - develop
-      - release/*
+on: [ pull_request ]
 
 jobs:
   build:
