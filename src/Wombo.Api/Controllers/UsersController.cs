@@ -32,7 +32,7 @@ namespace Wombo.Api.Controllers
             return Ok(_users);
         }
 
-        [HttpGet("userId")]
+        [HttpGet("{userId}")]
         public IActionResult GetUsers(int userId)
         {
             var user = _users.FirstOrDefault(user => user.Id == userId);
